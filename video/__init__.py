@@ -1,4 +1,4 @@
-import pytube
+"""import pytube
 import time
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
@@ -29,3 +29,4 @@ class Video:
 filenameCut = 'cut_' + currentTime
 
 ffmpeg_extract_subclip(f"video/cutted{name}.mp4", 61, 360, targetname=f"{name}.mp4")
+"""
