@@ -9,7 +9,8 @@ class Bot:
 
     def __init__(self, token):
         self.token = str(token)
-        self.vk = VK(VkApi(token=token))
+        self.session = VK(VkApi(token=token))
+        self.l_poll = self.session.get_long_poll(token)
 
     def send(self):
         pass
