@@ -1,0 +1,16 @@
+import pytube
+import time
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from moviepy.editor import VideoFileClip
+
+
+yt = pytube.YouTube('https://www.youtube.com/watch?v=shyWnNdtqqM')
+name = 'downloaded_' + str(time.time()).replace('.', '_')
+print(name)
+yt.streams.filter(progressive=True, file_extension='mp4').desc().first().download(output_path='D:\youtube',
+                                                                                  filename=name + '.')
+ffmpeg_extract_subclip(f"D:\youtube\{name}.mp4", 233, 300, targetname="output.mp4")
+
+clip = VideoFileClip(f"D:\youtube\{name}.mp4")
+video_duration = clip.duration
+print(video_duration)

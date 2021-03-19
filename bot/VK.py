@@ -1,15 +1,12 @@
-import vk_api as api
 import random
-from vk_api.longpoll import VkLongPoll as lPoll, VkEventType as eType
 
 
-class Bot:
+class VK:
 
-    def __init__(self, token):
-        self.token = str(token)
-        self.vk = api.VkApi(token=token)
+    def __init__(self, vk):
+        self.vk = vk
 
-    def send_msg(self, user_id, msg, attachment=''):
+    def send_msg(self, user_id, user_ids=None, msg=None, attachment=None):
         self.vk.method('messages.send',
                        {
                            'user_id': user_id,
@@ -17,4 +14,3 @@ class Bot:
                            'random_id': random.randint(0, 10000000000000000000000000),
                            'attachment': attachment
                        })
-
