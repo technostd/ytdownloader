@@ -1,5 +1,6 @@
 class Methods:
     send = 'messages.send'
+    getLP = 'messages.getLongPollServer'
 
 
 class AttachmentsTypes:

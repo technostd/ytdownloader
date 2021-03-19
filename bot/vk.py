@@ -1,7 +1,6 @@
 import random
 
-from bot.dict import Methods
-from bot.dict import AttachmentsTypes as ATypes
+from bot.templates.dict import Methods
 
 
 class VK:
@@ -9,7 +8,7 @@ class VK:
     def __init__(self, vk):
         self.vk = vk
 
-    def send_msg(self, peer_id=None, peer_ids=None, msg=None, attachment=None):
+    def send_msg(self, peer_id=None, peer_ids=None, msg=None, attachments=None):
 
         message = {
             'peer_id': peer_id,
@@ -20,3 +19,6 @@ class VK:
         }
 
         self.vk.method(Methods.send, message)
+
+
+#user_id, random_id, peer_id, peer_ids, domain, chat_id, message, lat, long, attachment
