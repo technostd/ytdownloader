@@ -28,5 +28,5 @@ class Video:
 
 filenameCut = 'cut_' + currentTime
 
-ffmpeg_extract_subclip(f"video/cutted{name}.mp4", 61, 360, targetname=f"{name}.mp4")
+ffmpeg_extract_subclip(f.txt"video/cutted{name}.mp4", 61, 360, targetname=f.txt"{name}.mp4")
 """

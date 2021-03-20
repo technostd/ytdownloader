@@ -1,27 +1,25 @@
 import random
 
+from vk_api.vk_api import VkApiGroup
+
 from bot.templates.attachment import Attachment
+from bot.templates.message import Message
 from bot.templates.dict import Methods
 
 
-class VK:
+class VK(VkApiGroup):
 
-    def __init__(self, vk):
-        self.session = vk
+    def __init__(self, token):
+        super().__init__(token=token)
 
     def get_long_poll(self, token):
-        self.session.method(Methods.getLP, {'access_token': token})
+        self.method(Methods.GET_LP, {'access_token': token})
 
-    def send_msg(self, peer_id=None, peer_ids=None, msg=None, attachments=None):
-        message = {
-            'peer_id': peer_id,
-            'peer_ids': peer_ids,
-            'message': msg,
-            'random_id': random.random(),
-            'attachment': self.str_dict(attachments)
-        }
+    def send_message(self, message: Message):
+        self.method(Methods.SEND, message)
 
-        self.session.method(Methods.send, message)
+    def upload_message_photo(self, filename: str):
+        self.method(Methods.GET_UPLOAD_SERVER)
 
     @staticmethod
     def str_dict(dictionary):
@@ -31,4 +29,16 @@ class VK:
         result = result[:len(result) - 1]
         return result
 
-# user_id, random_id, peer_id, peer_ids, domain, chat_id, message, lat, long, attachment
+# Message:
+# {
+#   user_id: int,
+#   random_id: float,
+#   peer_id: int,
+#   peer_ids: str,
+#   domain: str,
+#   chat_id: int,
+#   message: str,
+#   lat: float,
+#   long: float,
+#   attachment: str
+# }

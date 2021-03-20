@@ -1,17 +1,16 @@
-from vk_api import VkApi
+from bot.longpoll import LongPoll
 from bot.vk import VK
 
-import random
-from vk_api.longpoll import VkLongPoll as lPoll, VkEventType as eType
+
+DOMAIN_VK = 'https://vk.com/'
 
 
 class Bot:
 
     def __init__(self, token):
-        self.token = str(token)
-        self.session = VK(VkApi(token=token))
-        self.l_poll = self.session.get_long_poll(token)
+        self.session = VK(token)
+        self.long_poll = LongPoll(self.session)
 
-    def send(self):
-        pass
+    def start_poll(self):
+        self.long_poll.listen()
 
