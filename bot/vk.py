@@ -1,25 +1,28 @@
 import random
 
-from vk_api.vk_api import VkApiGroup
+from vk_api.upload import VkUpload
+from vk_api.vk_api import VkApiGroup  # , VkApiMethod
 
-from bot.templates.attachment import Attachment
-from bot.templates.message import Message
 from bot.templates.dict import Methods
+from bot.templates.message import Message
 
 
-class VK(VkApiGroup):
+class Vk(VkApiGroup):
 
     def __init__(self, token):
         super().__init__(token=token)
+        # self.method = VkApiMethod(self)
+        self.upload = VkUpload(self)
 
     def get_long_poll(self, token):
-        self.method(Methods.GET_LP, {'access_token': token})
+        return self.method(Methods.GET_LP, {'access_token': token})
 
     def send_message(self, message: Message):
-        self.method(Methods.SEND, message)
+        message.random_id = random.randint(-9223372036854775808, 9223372036854775807)
+        return self.method(Methods.SEND, message.dict())
 
-    def upload_message_photo(self, filename: str):
-        self.method(Methods.GET_UPLOAD_SERVER)
+    def upload_message_photo(self, filename: str, peer_id):
+        return self.upload.photo_messages([open(filename)], peer_id=peer_id)
 
     @staticmethod
     def str_dict(dictionary):

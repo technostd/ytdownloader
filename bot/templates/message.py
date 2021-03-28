@@ -1,13 +1,15 @@
-from bot.templates.attachment import Attachment
+import random
+from time import time
 
 
 class Message(dict):
 
-    def __init__(self, user_id=None, random_id=None, peer_id=None, peer_ids=None, domain=None, chat_id=None,
-                 message=None, lat=None, long=None, attachment=None):
+    def __init__(self, user_id=None, peer_id=None,
+                 peer_ids=None, domain=None, chat_id=None, message=None, lat=None, long=None, attachment=None):
         super().__init__()
         self.user_id = int(user_id) if user_id is not None else None
-        self.random_id = float(random_id) if random_id is not None else None
+        random.seed = time()
+        self.random_id = random.randint(-9223372036854775808, 9223372036854775807)
         self.peer_id = int(peer_id) if peer_id is not None else None
         self.peer_ids = list(peer_ids) if peer_ids is not None else None
         self.domain = str(domain) if domain is not None else None

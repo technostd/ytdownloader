@@ -1,3 +1,5 @@
+from random import random
+
 from bot.templates.message import Message
 
 
@@ -18,10 +20,8 @@ class AttachmentsTypes:
 
 
 class MessageTemplates:
-    NOT_DEFINED = Message(message='Моя твоя не понимать!',
-                          lat=None,
-                          long=None,
-                          attachment=None)
+    NOT_DEFINED = Message(message='Моя твоя не понимать!')
+    ASK_VIDEO_URL = Message(message='Укажите ссылку на видео')
 
 
 # Message(user_id=None,

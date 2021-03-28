@@ -1,4 +1,4 @@
-from bot.templates.dict import AttachmentsTypes as ATypes
+from .dict import AttachmentsTypes as ATypes
 from urllib.parse import urlparse as parser
 
 DOMAIN_VK = 'https://vk.com/'
@@ -26,10 +26,11 @@ class Attachment:
             return self.type + str(self.owner) + '_' + str(self.media) + '_' + str(self.key)
 
     def url(self):
-        return  + str(self)
+        return DOMAIN_VK + str(self)
 
     @staticmethod
     def parse(url):
-
-        str(url)
-        parsed = Attachment()
+        url = str(url)
+        path = parser(url).path.split('_')
+        parsed = Attachment(path[0], path[1], path[2], a_access_key=path[3] if len(path) > 3 else '')
+        return parsed
