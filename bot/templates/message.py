@@ -17,7 +17,7 @@ class Message(dict):
         self.message = str(message) if message is not None else None
         self.lat = float(lat) if lat is not None else None
         self.long = float(long) if long is not None else None
-        self.attachment = list(attachment) if attachment is not None else None
+        self.attachment = attachment if attachment is not None else None
 
     def __iter__(self):
         return self.dict().__iter__()

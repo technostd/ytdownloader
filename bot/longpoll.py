@@ -1,24 +1,23 @@
+import json
 import re
-
 from threading import Thread as Process
 from time import sleep
-from urllib.parse import urlparse as parser
 
-from vk_api.bot_longpoll import VkBotLongPoll
 from vk_api.longpoll import Event, VkEventType, VkLongPoll
 
-from bot.templates.dict import MessageTemplates
+from bot.templates.attachment import Attachment
+from bot.templates.dict import AttachmentsTypes as ATypes
 from bot.templates.message import Message
 from bot.vk import Vk
+from video.video import Video
 
-class LongPoll(VkBotLongPoll):
+
+class LongPoll(VkLongPoll):
     LISTENING = True
 
     def __init__(self, vk: Vk, group_id: int):
         super().__init__(vk=vk, group_id=group_id)
         self.vk = vk
-
-
 
     def listen(self):
         self.LISTENING = True
@@ -32,7 +31,41 @@ class LongPoll(VkBotLongPoll):
 
     def for_event(self, event: Event):
         if event.type == VkEventType.MESSAGE_NEW and not event.from_me:
-            #if event.message
+            patterns = {
+                'command': r'http[s]*://[\S]+',
+                'command_s': r'http[s]*://[\S]+\s\d+\s-s',
+                'command_e': r'http[s]*://[\S]+\s\d+\s-e',
+                'command_se': r'http[s]*://[\S]+\s\d+\s\d+',
+            }
+            if len(re.findall(patterns.get('command'), event.message)) != 0:
+                for i in re.findall(patterns.get('command'), event.message):
+                    message = Message(peer_id=event.peer_id,
+                                      message='working')
+                    self.send_message(message)
+                    i = i.split(' ')
+                    v = Video(i[0])
+
+                    uploaded = self.vk.upload_message_document(v.download(), event.peer_id)
+
+                    message = Message(peer_id=event.peer_id,
+                                      attachment=Attachment(ATypes.DOC, uploaded.get('doc').get('owner_id'),
+                                                            uploaded.get('doc').get('id')))
+                    self.send_message(message)
+            elif len(re.findall(patterns.get('command_s'), event.message)) != 0:
+                for i in re.findall(patterns.get('command_s'), event.message):
+                    message = Message(peer_id=event.peer_id,
+                                      message='working')
+                    self.send_message(message)
+                    i = i.split(' ')
+                    v = Video(i[0], i[1], i[2])
+
+                    uploaded = json.loads(self.vk.upload_message_document(v.download(), event.peer_id))
+
+                    message = Message(peer_id=event.peer_id,
+                                      attachment=Attachment(ATypes.DOC, uploaded.get('doc').get('owner_id'),
+                                                            uploaded.get('doc').get('id')))
+                    self.send_message(message)
+
             #  user = JSONDecoder.decode(open('dialogs.json').re)
             message = Message(peer_id=event.peer_id)
             # if event.message == 'Видео':
@@ -47,8 +80,10 @@ class LongPoll(VkBotLongPoll):
             #     self.send_message(message, MessageTemplates.NOT_DEFINED.message)
 
     def send_message(self, message_obj: Message, message=None, attachment=None):
-        message_obj.message = message
-        message_obj.attachment = attachment
+        if message is not None:
+            message_obj.message = message
+        if attachment is not None:
+            message_obj.attachment = attachment
         self.vk.send_message(message_obj)
 
     @staticmethod
@@ -67,4 +102,3 @@ class EventProcess(Process):
 
     def run(self):
         self.pool.for_event(self.event)
-

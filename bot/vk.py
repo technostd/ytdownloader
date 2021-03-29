@@ -18,11 +18,13 @@ class Vk(VkApiGroup):
         return self.method(Methods.GET_LP, {'access_token': token})
 
     def send_message(self, message: Message):
-        message.random_id = random.randint(-9223372036854775808, 9223372036854775807)
         return self.method(Methods.SEND, message.dict())
 
+    def upload_message_document(self, filename: str, peer_id):
+        return self.upload.document_message([filename], 'video', peer_id=peer_id)
+
     def upload_message_photo(self, filename: str, peer_id):
-        return self.upload.photo_messages([open(filename)], peer_id=peer_id)
+        return self.upload.photo_messages([filename], peer_id=peer_id)
 
     @staticmethod
     def str_dict(dictionary):
