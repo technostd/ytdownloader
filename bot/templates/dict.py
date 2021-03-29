@@ -1,7 +1,7 @@
 from random import random
 
 from bot.templates.message import Message
-
+from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
 class Methods:
     SEND = 'messages.send'
@@ -21,8 +21,12 @@ class AttachmentsTypes:
 
 class MessageTemplates:
     NOT_DEFINED = Message(message='Моя твоя не понимать!')
-    ASK_VIDEO_URL = Message(message='Укажите ссылку на видео')
+    ASK_VIDEO_URL = Message(message='Пока что мы принимаем видео только с YouTube')
+    HINT = Message(message='Заполните шаблон')
 
+
+class KeyboardTemplates:
+    pass
 
 # Message(user_id=None,
 #         random_id=None,

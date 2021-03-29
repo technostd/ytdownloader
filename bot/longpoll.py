@@ -1,21 +1,24 @@
 import re
+
 from threading import Thread as Process
 from time import sleep
 from urllib.parse import urlparse as parser
 
+from vk_api.bot_longpoll import VkBotLongPoll
 from vk_api.longpoll import Event, VkEventType, VkLongPoll
 
 from bot.templates.dict import MessageTemplates
 from bot.templates.message import Message
 from bot.vk import Vk
 
-
-class LongPoll(VkLongPoll):
+class LongPoll(VkBotLongPoll):
     LISTENING = True
 
-    def __init__(self, vk: Vk):
-        super().__init__(vk=vk)
+    def __init__(self, vk: Vk, group_id: int):
+        super().__init__(vk=vk, group_id=group_id)
         self.vk = vk
+
+
 
     def listen(self):
         self.LISTENING = True
@@ -29,19 +32,19 @@ class LongPoll(VkLongPoll):
 
     def for_event(self, event: Event):
         if event.type == VkEventType.MESSAGE_NEW and not event.from_me:
+            #if event.message
             #  user = JSONDecoder.decode(open('dialogs.json').re)
             message = Message(peer_id=event.peer_id)
-            if event.message == 'Видео':
-                self.vk.send_message(self.get_message(MessageTemplates.ASK_VIDEO_URL, event.peer_id))
-            elif len(re.findall('(?P<url>https?://[^\s]+)', event.message)) != 0:
-                p = parser(re.findall('(?P<url>https?://[^\s]+)', event.message)[0])
-                if p.netloc in ['www.youtube.com', 'youtu.be', 'youtube.com']:
-
-                    self.send_message(message, message=)
-                else:
-                    self.send_message(message, message='Пока что мы принимаем видео только с YouTube')
-            else:
-                self.send_message(message, MessageTemplates.NOT_DEFINED.message)
+            # if event.message == 'Видео':
+            #     self.vk.send_message(self.get_message(MessageTemplates.ASK_VIDEO_URL, event.peer_id))
+            # elif len(re.findall('(?P<url>https?://[^\s]+)', event.message)) != 0:
+            #     p = parser(re.findall('(?P<url>https?://[^\s]+)', event.message)[0])
+            #     if p.netloc in ['www.youtube.com', 'youtu.be', 'youtube.com']:
+            #         self.send_message(message, message=MessageTemplates.HINT.message)
+            #     else:
+            #         self.send_message(message, message='Пока что мы принимаем видео только с YouTube')
+            # else:
+            #     self.send_message(message, MessageTemplates.NOT_DEFINED.message)
 
     def send_message(self, message_obj: Message, message=None, attachment=None):
         message_obj.message = message
@@ -64,3 +67,4 @@ class EventProcess(Process):
 
     def run(self):
         self.pool.for_event(self.event)
+
