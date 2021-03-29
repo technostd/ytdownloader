@@ -35,8 +35,9 @@ class LongPoll(VkLongPoll):
                 self.vk.send_message(self.get_message(MessageTemplates.ASK_VIDEO_URL, event.peer_id))
             elif len(re.findall('(?P<url>https?://[^\s]+)', event.message)) != 0:
                 p = parser(re.findall('(?P<url>https?://[^\s]+)', event.message)[0])
-                if p.netloc == 'www.youtube.com' or 'youtu.be' or 'youtube.com':
-                    self.send_message(message, message=p.netloc)
+                if p.netloc in ['www.youtube.com', 'youtu.be', 'youtube.com']:
+
+                    self.send_message(message, message=)
                 else:
                     self.send_message(message, message='Пока что мы принимаем видео только с YouTube')
             else:

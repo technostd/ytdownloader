@@ -2,7 +2,7 @@ from vk_api.longpoll import VkLongPoll
 
 from bot.longpoll import LongPoll
 from bot.vk import Vk
-import bot.database as database
+import bot.peers as database
 
 DOMAIN_VK = 'https://vk.com/'
 
