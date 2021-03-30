@@ -1,7 +1,7 @@
-from random import random
+from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 
 from bot.templates.message import Message
-from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+
 
 class Methods:
     SEND = 'messages.send'

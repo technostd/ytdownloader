@@ -5,7 +5,8 @@ from time import time
 class Message(dict):
 
     def __init__(self, user_id=None, peer_id=None,
-                 peer_ids=None, domain=None, chat_id=None, message=None, lat=None, long=None, attachment=None):
+                 peer_ids=None, domain=None, chat_id=None, message=None, lat=None, long=None, attachment=None,
+                 payload=None):
         super().__init__()
         self.user_id = int(user_id) if user_id is not None else None
         random.seed = time()
@@ -18,6 +19,7 @@ class Message(dict):
         self.lat = float(lat) if lat is not None else None
         self.long = float(long) if long is not None else None
         self.attachment = attachment if attachment is not None else None
+        self.payload = payload if payload is not None else None
 
     def __iter__(self):
         return self.dict().__iter__()
@@ -39,7 +41,8 @@ class Message(dict):
             'message': self.message,
             'lat': self.lat,
             'long': self.long,
-            'attachment': self.attachment
+            'attachment': self.attachment,
+            'payload': self.payload
         }
         to_del = []
         for i in result:

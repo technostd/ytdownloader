@@ -3,10 +3,11 @@ import re
 from threading import Thread as Process
 from time import sleep
 
+from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import Event, VkEventType, VkLongPoll
 
 from bot.templates.attachment import Attachment
-from bot.templates.dict import AttachmentsTypes as ATypes
+from bot.templates.dict import AttachmentsTypes as ATypes, MessageTemplates
 from bot.templates.message import Message
 from bot.vk import Vk
 from video.video import Video
@@ -37,6 +38,7 @@ class LongPoll(VkLongPoll):
                 'command_e': r'http[s]*://[\S]+\s\d+\s-e',
                 'command_se': r'http[s]*://[\S]+\s\d+\s\d+',
             }
+            message = Message(peer_id=event.peer_id)
             if len(re.findall(patterns.get('command'), event.message)) != 0:
                 for i in re.findall(patterns.get('command'), event.message):
                     message = Message(peer_id=event.peer_id,
@@ -65,9 +67,16 @@ class LongPoll(VkLongPoll):
                                       attachment=Attachment(ATypes.DOC, uploaded.get('doc').get('owner_id'),
                                                             uploaded.get('doc').get('id')))
                     self.send_message(message)
+            else:
+                kb = VkKeyboard()
 
+                kb.add_button('Инструкция', VkKeyboardColor.SECONDARY)
+                kb.add_line()
+                kb.add_button('Шаблоны', VkKeyboardColor.PRIMARY)
+                kb = kb.get_keyboard()
+                self.send_message(message, message=MessageTemplates.NOT_DEFINED.message, payload=kb)
             #  user = JSONDecoder.decode(open('dialogs.json').re)
-            message = Message(peer_id=event.peer_id)
+
             # if event.message == 'Видео':
             #     self.vk.send_message(self.get_message(MessageTemplates.ASK_VIDEO_URL, event.peer_id))
             # elif len(re.findall('(?P<url>https?://[^\s]+)', event.message)) != 0:
@@ -79,11 +88,13 @@ class LongPoll(VkLongPoll):
             # else:
             #     self.send_message(message, MessageTemplates.NOT_DEFINED.message)
 
-    def send_message(self, message_obj: Message, message=None, attachment=None):
+    def send_message(self, message_obj: Message, message=None, attachment=None, payload=None):
         if message is not None:
             message_obj.message = message
         if attachment is not None:
             message_obj.attachment = attachment
+        if payload is not None:
+            message_obj.payload = payload
         self.vk.send_message(message_obj)
 
     @staticmethod
