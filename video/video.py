@@ -1,16 +1,17 @@
 import time
-
-from moviepy.editor import VideoClip, CompositeVideoClip, VideoFileClip
+import ffmpeg
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
+from moviepy.editor import VideoFileClip
 from pytube import YouTube
 
 
 class Video:
-    PATH = 'G:\\ytdownloader\\media\\'
+    PATH = 'C:\\ytdownloader\\media\\'
+    EXT = '.mp4'
 
     def __init__(self, url: str, start_time=0, end_time=None):
 
-        """
-        Инициализация видео
+        """ Инициализация видео
 
         :param url: URL видео
         :type url: str
@@ -30,9 +31,7 @@ class Video:
 
     def get_options(self):
 
-        """
-
-        Получить список доступных опций загрузки видео
+        """ Получить список доступных опций загрузки видео
 
         :return:  Список опций
 
@@ -59,22 +58,40 @@ class Video:
 
     def cut(self):
 
-        """
-
-          Путь к файлу для отправки в ВК
+        """ Путь к файлу для отправки в ВК
 
           :return: Строка, содержащая путь к готовому файлу
 
         """
-        clip = VideoFileClip(self.PATH + self.filename + '.mp4', audio=True)
-        clip.subclip(self.start_time, self.end_time)
-        clip.write_videofile(self.PATH + self.filename + '_edited.mp4')
-        # clip(self.PATH + self.filename + '.mp4', self.start_time, self.end_time,
-        #      targetname=self.PATH + self.filename + '_edited.mp4', )
-        return self.PATH + self.filename + '_edited.mp4'
+        # clip = VideoFileClip(self.PATH + self.filename + '.mp4', audio=True)
+        # clip.subclip(self.start_time, self.end_time)
+        # clip.write_videofile(self.PATH + self.filename + '_edited.mp4')
+        # (self.PATH + self.filename + '.mp4', self.start_time, self.end_time,
+        #     targetname=self.PATH + self.filename + '_edited.mp4', )
+        # return self.PATH + self.filename + '_edited.mp4'
+        clip = ffmpeg.input(self.PATH + self.filename + self.EXT,
+                            ss=self.timecode_to_hhmmss(self.start_time),
+                            t=self.timecode_to_hhmmss(self.end_time - self.start_time))
+        clip = ffmpeg.output(clip, self.PATH + self.filename + '_edited' + self.EXT)
+        ffmpeg.run(clip)
+        return self.PATH + self.filename + '_edited' + self.EXT
 
     def get_video_path(self):
         return self.PATH + self.filename + '.mp4'
+
+    @staticmethod
+    def timecode_to_hhmmss(timecode):
+        timecode = int(timecode) % 86400
+        sp_h = timecode // 3600
+        timecode = timecode % 3600
+        sp_m = timecode // 60
+        sp_s = timecode % 60
+
+        hh = str(sp_h).zfill(2)
+        mm = str(sp_m).zfill(2)
+        ss = str(sp_s).zfill(2)
+
+        return f'{hh}:{mm}:{ss}'
 
 
 if __name__ == '__main__':

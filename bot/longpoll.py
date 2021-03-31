@@ -39,13 +39,13 @@ class LongPoll(VkLongPoll):
                 'command_se': r'http[s]*://[\S]+\s\d+\s\d+',
             }
             message = Message(peer_id=event.peer_id)
-            if len(re.findall(patterns.get('command'), event.message)) != 0:
-                for i in re.findall(patterns.get('command'), event.message):
+            if len(re.findall(patterns.get('command_se'), event.message)) != 0:
+                for i in re.findall(patterns.get('command_se'), event.message):
                     message = Message(peer_id=event.peer_id,
                                       message='working')
                     self.send_message(message)
                     i = i.split(' ')
-                    v = Video(i[0])
+                    v = Video(i[0], start_time=i[1], end_time=i[2])
 
                     uploaded = self.vk.upload_message_document(v.download(), event.peer_id)
 
@@ -105,6 +105,17 @@ class LongPoll(VkLongPoll):
 
 
 class EventProcess(Process):
+
+    def __init__(self, pool: LongPoll, event: Event):
+        super().__init__()
+        self.event = event
+        self.pool = pool
+
+    def run(self):
+        self.pool.for_event(self.event)
+
+
+class PoolingProcess(Process):
 
     def __init__(self, pool: LongPoll, event: Event):
         super().__init__()
