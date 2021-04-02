@@ -18,6 +18,7 @@ class Vk(VkApiGroup):
         return self.method(Methods.GET_LP, {'access_token': token})
 
     def send_message(self, message: Message):
+        # @debug m = message.dict()
         return self.method(Methods.SEND, message.dict())
 
     def upload_message_document(self, filename: str, peer_id):
