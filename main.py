@@ -13,7 +13,7 @@
 # -------------------------------------------------------------
 
 from bot.bot import Bot
-
+'\\\\'
 # --- const --- #
 TOKEN = 'd29f7cb21202b0ed5892a5cf732848ee54bae4e8accadef52d88140be1c9ab2d9bff7ca45bf306afa66ba'  # access token
 GROUP_ID = 203330548  # group for connecting

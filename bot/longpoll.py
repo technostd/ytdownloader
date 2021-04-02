@@ -68,13 +68,30 @@ class LongPoll(VkLongPoll):
                                                             uploaded.get('doc').get('id')))
                     self.send_message(message)
             else:
+                keyboard = {
+                    'inline': True,
+                    'one_time': False,
+                    'buttons':
+                        [
+                            [
+                                {
+                                    'color': 'primary',
+                                    'action': {
+                                        'type': 'text',
+                                        'label': 'qq epta'
+                                    }
+                                }
+                            ]
+                        ]
+                }
+                keyboard = json.dumps(keyboard)
                 kb = VkKeyboard()
 
                 kb.add_button('Инструкция', VkKeyboardColor.SECONDARY)
                 kb.add_line()
                 kb.add_button('Шаблоны', VkKeyboardColor.PRIMARY)
                 kb = kb.get_keyboard()
-                self.send_message(message, message=MessageTemplates.NOT_DEFINED.message, payload=kb)
+                self.send_message(message, message=MessageTemplates.NOT_DEFINED.message,  payload=keyboard)
             #  user = JSONDecoder.decode(open('dialogs.json').re)
 
             # if event.message == 'Видео':
@@ -94,7 +111,7 @@ class LongPoll(VkLongPoll):
         if attachment is not None:
             message_obj.attachment = attachment
         if payload is not None:
-            message_obj.payload = payload
+            message_obj.keyboard = payload
         self.vk.send_message(message_obj)
 
     @staticmethod

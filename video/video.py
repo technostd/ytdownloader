@@ -6,7 +6,7 @@ from pytube import YouTube
 
 
 class Video:
-    PATH = 'C:\\ytdownloader\\media\\'
+    PATH = 'C:\\Files\\ytdownloader\\media\\'
     EXT = '.mp4'
 
     def __init__(self, url: str, start_time=0, end_time=None):
@@ -26,7 +26,7 @@ class Video:
 
         self.filename = ''.join(str(int(time.time())))
         self.video = YouTube(url)
-        self.start_time = start_time
+        self.start_time = int(start_time)
         self.end_time = int(end_time) if end_time is not None else None
 
     def get_options(self):
@@ -63,12 +63,7 @@ class Video:
           :return: Строка, содержащая путь к готовому файлу
 
         """
-        # clip = VideoFileClip(self.PATH + self.filename + '.mp4', audio=True)
-        # clip.subclip(self.start_time, self.end_time)
-        # clip.write_videofile(self.PATH + self.filename + '_edited.mp4')
-        # (self.PATH + self.filename + '.mp4', self.start_time, self.end_time,
-        #     targetname=self.PATH + self.filename + '_edited.mp4', )
-        # return self.PATH + self.filename + '_edited.mp4'
+
         clip = ffmpeg.input(self.PATH + self.filename + self.EXT,
                             ss=self.timecode_to_hhmmss(self.start_time),
                             t=self.timecode_to_hhmmss(self.end_time - self.start_time))
