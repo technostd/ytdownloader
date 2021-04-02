@@ -1,31 +1,42 @@
 import random
 from time import time
 
+from bot.templates.attachment import Attachment
+from bot.templates.keyboard import Keyboard
+# from bot.vk import Vk
+
 
 class Message(dict):
 
-    def __init__(self, user_id=None, peer_id=None,
-                 peer_ids=None, domain=None, chat_id=None, message=None, lat=None, long=None, attachment=None,
+    def __init__(self, user_id=None,
+                 peer_id: int = None,
+                 peer_ids: list = None,
+                 domain: str = None,
+                 chat_id: int = None,
+                 message: str = None,
+                 lat: float = None,
+                 long: float = None,
+                 attachment: Attachment or list = None,
                  keyboard=None):
         super().__init__()
-        self.user_id = int(user_id) if user_id is not None else None
+        self.user_id = user_id
         random.seed = time()
         self.random_id = random.randint(-9223372036854775808, 9223372036854775807)
-        self.peer_id = int(peer_id) if peer_id is not None else None
-        self.peer_ids = list(peer_ids) if peer_ids is not None else None
-        self.domain = str(domain) if domain is not None else None
-        self.chat_id = int(chat_id) if chat_id is not None else None
-        self.message = str(message) if message is not None else None
-        self.lat = float(lat) if lat is not None else None
-        self.long = float(long) if long is not None else None
-        self.attachment = attachment if attachment is not None else None
-        self.keyboard = keyboard if keyboard is not None else None
+        self.peer_id = peer_id
+        self.peer_ids = peer_ids
+        self.domain = domain
+        self.chat_id = chat_id
+        self.message = message
+        self.lat = lat
+        self.long = long
+        self.attachment = attachment
+        self.keyboard = keyboard
 
     def __iter__(self):
         return self.dict().__iter__()
 
     def __getitem__(self, item):
-        return self.dict().get(item)
+        return self.dict()[item]
 
     def __len__(self):
         return len(self.dict())
@@ -45,11 +56,63 @@ class Message(dict):
             'keyboard': self.keyboard
         }
         to_del = []
-        for i in result:
-            if result.get(i) is None:
-                to_del.append(i)
+        for key in result:
+            if result[key] is None:
+                to_del.append(key)
 
-        for i in to_del:
-            result.__delitem__(i)
+        for key in to_del:
+            result.__delitem__(key)
 
         return result
+
+    def user_id(self, user_id: int):
+        self.user_id = user_id
+        return self
+
+    def peer_id(self, peer_id: int):
+        self.peer_id = peer_id
+        return self
+
+    def peer_ids(self, peer_ids: list):
+        self.peer_ids = peer_ids
+        return self
+
+    def domain(self, domain: str):
+        self.domain = domain
+        return self
+
+    def chat_id(self, chat_id: int):
+        self.chat_id = chat_id
+        return self
+
+    def message(self, message: str):
+        self.message = message
+        return self
+
+    def lat(self, lat: float):
+        self.lat = lat
+        return self
+
+    def long(self, long: float):
+        self.long = long
+        return self
+
+    def attachment(self, attachment: Attachment or list):
+        self.attachment = attachment
+        return self
+
+    def keyboard(self, keyboard: Keyboard):
+        self.keyboard = keyboard
+        return self
+
+    # def send(self):
+    #     if self.peer_id or self.peer_ids or self.user_id or self.chat_id:
+    #         Vk.vk.send_message(self)
+
+
+class MessageTemplates:
+    NOT_DEFINED = Message(
+        message=random.choice(['Эм, что?', 'Я не понял.', 'Не понимаю.', 'Повтори еще раз. Не слышу.']))
+    ASK_VIDEO_URL = Message(message='Пока что мы принимаем видео только с YouTube')
+    HINT = Message(message='Заполните шаблон')
+

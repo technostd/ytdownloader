@@ -6,9 +6,8 @@ from time import sleep
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.longpoll import Event, VkEventType, VkLongPoll
 
-from bot.templates.attachment import Attachment
-from bot.templates.dict import AttachmentsTypes as ATypes, MessageTemplates
-from bot.templates.message import Message
+from bot.templates.attachment import Attachment, AttachmentsTypes as ATypes
+from bot.templates.message import Message, MessageTemplates
 from bot.vk import Vk
 from video.video import Video
 
@@ -39,11 +38,9 @@ class LongPoll(VkLongPoll):
                 'command_se': r'http[s]*://[\S]+\s\d+\s\d+',
             }
             message = Message(peer_id=event.peer_id)
-            if len(re.findall(patterns.get('command_se'), event.message)) != 0:
-                for i in re.findall(patterns.get('command_se'), event.message):
-                    message = Message(peer_id=event.peer_id,
-                                      message='working')
-                    self.send_message(message)
+            if len(re.findall(patterns['command_se'], event.message)) != 0:
+                for i in re.findall(patterns['command_se'], event.message):
+                    self.send_message(message.message('Запрос принят. Ожидайте.'))
                     i = i.split(' ')
                     v = Video(i[0], start_time=i[1], end_time=i[2])
 
@@ -78,7 +75,7 @@ class LongPoll(VkLongPoll):
                                     'color': 'primary',
                                     'action': {
                                         'type': 'text',
-                                        'label': 'qq epta'
+                                        'label': 'Инструкция'
                                     }
                                 }
                             ]
@@ -91,7 +88,7 @@ class LongPoll(VkLongPoll):
                 kb.add_line()
                 kb.add_button('Шаблоны', VkKeyboardColor.PRIMARY)
                 kb = kb.get_keyboard()
-                self.send_message(message, message=MessageTemplates.NOT_DEFINED.message,  payload=keyboard)
+                self.send_message(message, message=MessageTemplates().NOT_DEFINED.message,  payload=keyboard)
             #  user = JSONDecoder.decode(open('dialogs.json').re)
 
             # if event.message == 'Видео':

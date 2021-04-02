@@ -9,6 +9,8 @@ from bot.templates.message import Message
 
 class Vk(VkApiGroup):
 
+    vk = None
+
     def __init__(self, token):
         super().__init__(token=token)
         # self.method = VkApiMethod(self)

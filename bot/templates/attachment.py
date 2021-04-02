@@ -1,7 +1,15 @@
-from .dict import AttachmentsTypes as ATypes
 from urllib.parse import urlparse as parser
 
 DOMAIN_VK = 'https://vk.com/'
+
+class AttachmentsTypes:
+    PHOTO = 'photo'
+    VIDEO = 'video'
+    AUDIO = 'audio'
+    DOC = 'doc'
+    WALL = 'wall'
+    MARKET = 'market'
+    POLL = 'poll'
 
 
 class Attachment:
