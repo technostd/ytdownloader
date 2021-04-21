@@ -2,7 +2,7 @@ import random
 from time import time
 
 from bot.templates.attachment import Attachment
-from bot.templates.keyboard import Keyboard
+from bot.templates.keyboard import VkKeyboard
 # from bot.vk import Vk
 
 
@@ -101,7 +101,7 @@ class Message(dict):
         self.attachment = attachment
         return self
 
-    def keyboard(self, keyboard: Keyboard):
+    def keyboard(self, keyboard: VkKeyboard):
         self.keyboard = keyboard
         return self
 

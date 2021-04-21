@@ -1,3 +1,6 @@
+import json
+
+
 class VkActionType:
     """ VK keyboard button available actions: const """
 
@@ -28,7 +31,7 @@ class VkButtonAction:
                  hash: str = None,
                  app_id: int = None,
                  owner_id: int = None,
-                 payload=None):
+                 payload: str = None):
         """
         Basic constructor for VK button action
 
@@ -56,12 +59,12 @@ class VkButtonAction:
         :except UndefinedTypeException: Action type not in available type list
         """
 
-        if type not in VkActionType[VkActionType.TYPE_TEXT,
-                                    VkActionType.TYPE_OPEN_LINK,
-                                    VkActionType.TYPE_LOCATION,
-                                    VkActionType.TYPE_VK_PAY,
-                                    VkActionType.TYPE_VK_APPS,
-                                    VkActionType.TYPE_CALLBACK]:
+        if type not in [VkActionType.TYPE_TEXT,
+                        VkActionType.TYPE_OPEN_LINK,
+                        VkActionType.TYPE_LOCATION,
+                        VkActionType.TYPE_VK_PAY,
+                        VkActionType.TYPE_VK_APPS,
+                        VkActionType.TYPE_CALLBACK]:
             raise Exception('UndefinedTypeException')
         self.type = type
         self.label = label
@@ -104,6 +107,22 @@ class VkButton:
     def text(label: str, payload: str = None, color: str = VkButtonColor.COLOR_PRIMARY):
         return VkButton(action=VkButtonAction(type=VkActionType.TYPE_TEXT, label=label, payload=payload), color=color)
 
+    def __dict__(self):
+        result = {
+            'action': self.action.__dict__(),
+            'color': self.color
+        }
+
+        to_del = []
+        for key in result:
+            if result[key] is None:
+                to_del.append(key)
+
+        for key in to_del:
+            result.__delitem__(key)
+
+        return result
+
 
 class VkKeyboard:
     """ VK keyboard buttons and options description """
@@ -115,9 +134,17 @@ class VkKeyboard:
     def __init__(self, inline: bool = False, one_time: bool = False):
         self.inline = inline
         self.one_time = one_time
-        self.buttons = list()
+        self.buttons = []
+
+    def add_button(self, button: VkButton):
+        if len(self.buttons[1::-1]) >= self.MAX_BUTTONS_ON_LINE:
+            raise Exception('Too much buttons in line')
+        self.buttons[1::-1].append(button.__dict__())
 
     def add_line(self, line: list):
+        if (len(self.buttons) >= self.MAX_DEFAULT_LINES and not self.inline) or (
+                len(self.buttons) >= self.MAX_INLINE_LINES and self.inline):
+            raise Exception('Too much lines in keyboard')
         for button in line:
             if button is not VkButton:
                 raise Exception('NotButtonException')
@@ -126,9 +153,15 @@ class VkKeyboard:
     def clear(self):
         self.buttons.clear()
 
+    def __str__(self):
+        return json.loads(self.json())
+
+    def json(self):
+        return json.dumps(self.__dict__())
+
     def __dict__(self):
         return {
-            'inline': self.inline,
             'one_time': self.one_time,
-            'buttons': self.buttons
+            'buttons': self.buttons,
+            'inline': self.inline
         }

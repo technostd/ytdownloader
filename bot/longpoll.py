@@ -3,9 +3,10 @@ import re
 from threading import Thread as Process
 from time import sleep
 
-from vk_api.keyboard import VkKeyboard, VkKeyboardColor
+
 from vk_api.longpoll import Event, VkEventType, VkLongPoll
 
+from bot.templates.keyboard import *
 from bot.templates.attachment import Attachment, AttachmentsTypes as ATypes
 from bot.templates.message import Message, MessageTemplates
 from bot.vk import Vk
@@ -31,6 +32,7 @@ class LongPoll(VkLongPoll):
 
     def for_event(self, event: Event):
         if event.type == VkEventType.MESSAGE_NEW and not event.from_me:
+
             patterns = {
                 'command': r'http[s]*://[\S]+',
                 'command_s': r'http[s]*://[\S]+\s\d+\s-s',
@@ -65,30 +67,29 @@ class LongPoll(VkLongPoll):
                                                             uploaded.get('doc').get('id')))
                     self.send_message(message)
             else:
-                keyboard = {
-                    'inline': True,
-                    'one_time': False,
-                    'buttons':
-                        [
-                            [
-                                {
-                                    'color': 'primary',
-                                    'action': {
-                                        'type': 'text',
-                                        'label': 'Инструкция'
-                                    }
-                                }
-                            ]
-                        ]
-                }
-                keyboard = json.dumps(keyboard)
-                kb = VkKeyboard()
+                # keyboard = {
+                #     'inline': True,
+                #     'one_time': False,
+                #     'buttons':
+                #         [
+                #             [
+                #                 {
+                #                     'color': 'primary',
+                #                     'action': {
+                #                         'type': 'text',
+                #                         'label': 'Инструкция'
+                #                     }
+                #                 }
+                #             ]
+                #         ]
+                # }
+                # keyboard = json.dumps(keyboard)
 
-                kb.add_button('Инструкция', VkKeyboardColor.SECONDARY)
-                kb.add_line()
-                kb.add_button('Шаблоны', VkKeyboardColor.PRIMARY)
-                kb = kb.get_keyboard()
-                self.send_message(message, message=MessageTemplates().NOT_DEFINED.message,  payload=keyboard)
+                keyboard = VkKeyboard(inline=True)
+
+                keyboard.add_button(VkButton(VkButton.text('Помощь'), color=VkButtonColor.COLOR_SECONDARY))
+                print(keyboard.json())
+                self.send_message(message, message=MessageTemplates().NOT_DEFINED.message,  payload=keyboard.json())
             #  user = JSONDecoder.decode(open('dialogs.json').re)
 
             # if event.message == 'Видео':
