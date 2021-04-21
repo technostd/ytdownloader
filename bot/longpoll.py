@@ -35,7 +35,7 @@ class LongPoll(VkLongPoll):
                 'command': r'http[s]*://[\S]+',
                 'command_s': r'http[s]*://[\S]+\s\d+\s-s',
                 'command_e': r'http[s]*://[\S]+\s\d+\s-e',
-                'command_se': r'http[s]*://[\S]+\s\d+\s\d+',
+                'command_se': r'http[s]*://[\S]+a\s\d+\s\d+',
             }
             message = Message(peer_id=event.peer_id)
             if len(re.findall(patterns['command_se'], event.message)) != 0:

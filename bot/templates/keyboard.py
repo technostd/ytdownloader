@@ -1,4 +1,6 @@
-class Action:
+class VkActionType:
+    """ VK keyboard button available actions: const """
+
     TYPE_TEXT = 'text'
     TYPE_OPEN_LINK = 'open_link'
     TYPE_LOCATION = 'location'
@@ -6,20 +8,60 @@ class Action:
     TYPE_VK_APPS = 'open_app'
     TYPE_CALLBACK = 'callback'
 
+
+class VkButtonColor:
+    """ VK keyboard available colors: const """
+
+    COLOR_PRIMARY = 'primary'
+    COLOR_SECONDARY = 'secondary'
+    COLOR_NEGATIVE = 'negative'
+    COLOR_POSITIVE = 'positive'
+
+
+class VkButtonAction:
+    """ Action type and parameters description """
+
     def __init__(self,
-                 type: str = TYPE_TEXT,
+                 type: str = VkActionType.TYPE_TEXT,
                  label: str = None,
                  link: str = None,
                  hash: str = None,
                  app_id: int = None,
                  owner_id: int = None,
                  payload=None):
-        if type not in [self.TYPE_TEXT,
-                        self.TYPE_OPEN_LINK,
-                        self.TYPE_LOCATION,
-                        self.TYPE_VK_PAY,
-                        self.TYPE_VK_APPS,
-                        self.TYPE_CALLBACK]:
+        """
+        Basic constructor for VK button action
+
+        :param type: Type
+        :type type: str
+
+        :param label: Label
+        :type label: str
+
+        :param link: Link
+        :type link: str
+
+        :param hash: Hash
+        :type hash: str
+
+        :param app_id: VK app ID
+        :type app_id: int
+
+        :param owner_id: Owner ID
+        :type owner_id: int
+
+        :param payload: Payload
+        :type payload: str
+
+        :except UndefinedTypeException: Action type not in available type list
+        """
+
+        if type not in VkActionType[VkActionType.TYPE_TEXT,
+                                    VkActionType.TYPE_OPEN_LINK,
+                                    VkActionType.TYPE_LOCATION,
+                                    VkActionType.TYPE_VK_PAY,
+                                    VkActionType.TYPE_VK_APPS,
+                                    VkActionType.TYPE_CALLBACK]:
             raise Exception('UndefinedTypeException')
         self.type = type
         self.label = label
@@ -30,25 +72,63 @@ class Action:
         self.payload = payload
 
     def __dict__(self):
-        pass
+        result = {
+            'type': self.type,
+            'label': self.label,
+            'link': self.link,
+            'hash': self.hash,
+            'app_id': self.app_id,
+            'owner_id': self.owner_id,
+            'payload': self.payload
+        }
+
+        to_del = []
+        for key in result:
+            if result[key] is None:
+                to_del.append(key)
+
+        for key in to_del:
+            result.__delitem__(key)
+
+        return result
 
 
-class Button:
-    COLOR_PRIMARY = 'primary'
-    COLOR_SECONDARY = 'secondary'
-    COLOR_NEGATIVE = 'negative'
-    COLOR_POSITIVE = 'positive'
+class VkButton:
+    """ VK keyboard button color and action description """
 
-    def __init__(self, action: Action, color=COLOR_PRIMARY):
+    def __init__(self, action: VkButtonAction, color=VkButtonColor.COLOR_PRIMARY):
         self.action = action
         self.color = color
 
+    @staticmethod
+    def text(label: str, payload: str = None, color: str = VkButtonColor.COLOR_PRIMARY):
+        return VkButton(action=VkButtonAction(type=VkActionType.TYPE_TEXT, label=label, payload=payload), color=color)
 
-class Keyboard:
+
+class VkKeyboard:
+    """ VK keyboard buttons and options description """
+
+    MAX_BUTTONS_ON_LINE = 5
+    MAX_DEFAULT_LINES = 10
+    MAX_INLINE_LINES = 6
 
     def __init__(self, inline: bool = False, one_time: bool = False):
-        self.keyboard = {
-            'inline': inline,
-            'one_time': one_time,
-            'buttons': [[]]
+        self.inline = inline
+        self.one_time = one_time
+        self.buttons = list()
+
+    def add_line(self, line: list):
+        for button in line:
+            if button is not VkButton:
+                raise Exception('NotButtonException')
+        self.buttons.append(line)
+
+    def clear(self):
+        self.buttons.clear()
+
+    def __dict__(self):
+        return {
+            'inline': self.inline,
+            'one_time': self.one_time,
+            'buttons': self.buttons
         }
